@@ -94,6 +94,31 @@ vector<string> LinuxParser::CpuUtilization(int pid)
   return cpuStats; 
 }
 
+// Read and return Processor utilization
+vector<float> LinuxParser::ProcessorUtilization()
+{
+  vector<float> curr_state; 
+  float val = 0.0; 
+  std::string lineData; 
+  std::string keyData; 
+
+  std::ifstream stream(kProcDirectory + kStatFilename); 
+  if(stream.is_open()){
+    while(std::getline(stream, lineData)){
+      std::istringstream lineStream(lineData);
+      while(lineStream >> keyData){
+        if("cpu" == keyData){
+          while(lineStream >> val){
+            curr_state.emplace_back(val); 
+          }
+        }
+      }
+    }
+  }  
+
+  return curr_state; 
+}
+
 // Read and return the total number of processes
 int LinuxParser::TotalProcesses() 
 { 
@@ -127,7 +152,9 @@ string LinuxParser::Ram(int pid)
 // Read and return the user associated with a process
 string LinuxParser::User(int pid[[maybe_unused]]) 
 { 
-  string lineData, data1, data2; 
+  string lineData; 
+  string data1;
+  string data2; 
   int fileUserId;
 
   int userId = SearchForKey<int>("Uid:", kProcDirectory + to_string(pid)

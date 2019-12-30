@@ -17,34 +17,17 @@
 float Processor::Utilization() 
 { 
   // Extract CPU utilization information from /proc/stat 
-  std::string lineData, keyData; 
-  std::vector<float> curr_state;
-  float val = 0.0; 
-
-  // Extract the information from /proc/state file and store in current state
-  std::ifstream stream(LinuxParser::kProcDirectory + LinuxParser::kStatFilename); 
-  if(stream.is_open()){
-    while(std::getline(stream, lineData)){
-      std::istringstream lineStream(lineData);
-      while(lineStream >> keyData){
-        if("cpu" == keyData){
-          while(lineStream >> val){
-            curr_state.emplace_back(val); 
-          }
-        }
-      }
-    }
-  }
+  std::vector<float> curr_state = LinuxParser::ProcessorUtilization();
 
   // Compute total usage, idle usage and non idle usage for current and previous state
-  double currIdle    = curr_state[3] + curr_state[4]; 
-  double prevIdle    = prev_state[3] + prev_state[4];      
-  float currNonIdle = curr_state[0] + curr_state[1] + 
-                      curr_state[2] + curr_state[5] + 
-                      curr_state[6] + curr_state[7];
-  float prevNonIdle = prev_state[0] + prev_state[1] + 
-                      prev_state[2] + prev_state[5] + 
-                      prev_state[6] + prev_state[7];
+  double currIdle    = curr_state[pIdle] + curr_state[pIowait]; 
+  double prevIdle    = prev_state[pIdle] + prev_state[pIowait];      
+  float currNonIdle = curr_state[pUser] + curr_state[pNice] + 
+                      curr_state[pSystem] + curr_state[pIrq] + 
+                      curr_state[pSoftirq] + curr_state[pSteal];
+  float prevNonIdle = prev_state[pUser] + prev_state[pNice] + 
+                      prev_state[pSystem] + prev_state[pIrq] + 
+                      prev_state[pSoftirq] + prev_state[pSteal];
   float currTotal   = currIdle + currNonIdle; 
   float prevTotal   = prevIdle + prevNonIdle; 
 

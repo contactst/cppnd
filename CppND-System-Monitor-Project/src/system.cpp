@@ -47,7 +47,7 @@ void System::AddNewProcessToList(bool& procStatus)
       [pid](Process& newProc){return newProc.Pid() == pid;}) == processes_.end()){
       procStatus = true; 
       Process process(current_pids_[index], Hertz_); 
-      processes_.push_back(process); 
+      processes_.emplace_back(process); 
     }
   }
 }
