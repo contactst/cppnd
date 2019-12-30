@@ -39,3 +39,9 @@ This project uses [Make](https://www.gnu.org/software/make/). The Makefile has f
 5. Implement the `System`, `Process`, and `Processor` classes, as well as functions within the `LinuxParser` namespace.
 
 6. Submit!
+
+## Final Results
+
+Once you complete the project, the result should look something like below! 
+
+![System Monitor](images/System_Monitor.png)
